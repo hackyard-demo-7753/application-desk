@@ -3,27 +3,28 @@
 A Switch room that turns internship postings into approved, ready-to-submit
 applications. Built for the Flip the Switch hackathon (Track 02).
 
-Two agents that cannot merge, one person in the middle:
+Two agents with separate jobs and separate data, one person in the middle:
 
 - **scout** reads only public postings. It scores each one against public
   search criteria and posts the match, with the exact lines from the
-  posting that decide the fit. It never sees the private profile.
-- **writer** reads only the private profile. It never goes to the web; it
-  drafts from what the scout posts in the room. Nothing it writes leaves
-  `drafts/` without explicit approval.
-- **you** hold the exclusive `approver` role. No application is finalized
-  without your named approval in the room, and every decision lands in the
-  room's permanent Tracker doc.
+  posting that decide the fit. Its instructions confine it to postings -
+  the private profile is not in its directory.
+- **writer** reads the private profile and what the scout posts in the
+  room - never the web. It drafts, saves to `drafts/`, and stops.
+  Nothing it writes leaves `drafts/` without explicit approval.
+- **you** are the only approver. By room instruction, no application is
+  finalized without your named approval in the room, and every decision
+  lands in the room's tracker file.
 
 ## Why Switch is load-bearing here
 
-Remove Switch and the workflow collapses: the scout cannot hand a match to
-the writer with context (they run with separate data on purpose, and the
-room is the only channel between them), the approval has nowhere binding
-to live (it would be a chat message an agent can ignore), and the Tracker
-is not a shared permanent artifact. The room instructions, the exclusive
-approver role, and the room doc are what keep the boundary and the gate
-honest. Switch is the workflow, not a notification layer.
+The room is the whole product. It is the shared channel where the scout
+hands a match to the writer with full context (they keep separate data on
+purpose - in the demo the writer refuses to fetch a posting from the web
+itself and asks the scout for it through the room instead), the place the
+human approval gate lives, and the shared record the tracker is written
+from. The room template and the agents' instructions carry the workflow;
+Switch is what puts all of it in one place.
 
 ## Run it
 
@@ -39,7 +40,7 @@ or OpenCode all work).
    (The Console shows each agent's directory on its card.)
 3. In the room, say: `scout, check for new postings.`
 4. The scout posts its matches. The writer drafts the strong one and
-   stops. Approve it by name - or reject it - and watch the Tracker.
+   stops. Approve it by name - or reject it - and watch the tracker.
 
 The kickoff message has both agents state their own limits first, so the
 first thing in the room is what each agent will and will not do.
@@ -53,13 +54,16 @@ scout says so when it uses them. In real use, a watcher saves genuine
 public postings into the scout's folder and the real profile stays on the
 owner's machine - it is never committed here.
 
-## The boundary, mechanically
+## The boundary, honestly
 
-The scout's working directory contains only postings and public criteria;
-the writer's contains only the profile. Each agent's tools reach its own
-directory, so the writer cannot read a posting file and the scout cannot
-read the resume. Ask the writer to fetch a posting itself and it refuses -
-that refusal is part of the demo video.
+Each agent works in its own directory - the scout's holds only postings
+and public criteria, the writer's holds only the profile - and each
+agent's instructions confine it to its own data. This is
+**instruction-based separation, demonstrated in the demo - not a hard
+access-control boundary**. Ask the writer to fetch a posting itself and
+it refuses, then asks the scout for it through the room; ask the scout
+about the profile and it refuses. Those refusals are part of the demo
+video.
 
 ## Reproduce from scratch
 

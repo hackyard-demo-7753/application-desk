@@ -1,41 +1,43 @@
-# Demo script (DRAFT v3 - needs Utpal's approval before recording; UNDER 3:00 hard limit)
-# Setting: room bridged to Mattermost team chat; agents run by Switch on a build
-# host; the person participates from the Mattermost web app.
+# Application Desk - demo narration (v6, for approval; about 2:00, hard cap 3:00)
+# Scene labels in brackets are for the editor, not spoken.
 
-0:00-0:15 - Over the room's empty channel:
-"Internship applications are copy-paste chaos. The posting lives on the
-web, my resume lives on my machine, and what I submit should never be
-written by whichever bot read both. Application Desk is a Switch room with
-two agents that cannot merge - and one human gate."
+[0:00-0:15 - the chat's opening messages on screen]
+"Applying for internships is copy-paste chaos. This demo follows one
+internship all the way through: find the right one, get a draft
+written, then I decide. Application Desk is a Switch chat where two
+helpers split the job - and the final word stays with me."
 
-0:15-0:35 - Show application-desk.template.yaml, then the room live in
-Mattermost with the kickoff visible (each agent states its own limits).
-"One template creates both agents, the room, its rules and its tracker -
-and the first thing in the room is each agent saying what it will not do.
-These postings are saved demo data, labeled as such."
+[0:15-0:35 - the setup files, briefly]
+"Before we start: everything you'll see is sample data, made up for
+this demo and labeled that way. The setup files are in the project, so
+anyone can run the same thing themselves."
 
-0:35-1:15 - I type: "scout, check for new postings." Scout posts two
-matches: STRONG for the backend internship, quoting the rate-limiting
-project line; WEAK for the rotational one - "assists teams", no stated
-project. Each match shows the exact deciding lines.
-"The scout's whole world is public postings."
+[0:35-1:05 - "scout, check for new postings." + scout's match post]
+"First, the scout. It only looks at job postings. I ask it to check
+what's new, and it comes back with a backend internship at Northwind -
+and it shows me why it picked it: the kind of work, the stipend, the
+deadline, quoted from the posting itself."
 
-1:15-1:50 - Writer drafts from the private profile: a cover note quoting
-the posting's own ask, matched to the KV-store and Torrent-lite projects.
-Saves to drafts/, posts the summary - and stops.
-"The writer never goes to the web. And it stops - nothing leaves drafts
-without my word."
+[1:05-1:30 - writer's "Draft ready" post]
+"Then the writer. It reads my profile and what the scout just shared -
+nothing else - and writes the application draft. It posts a summary for
+me... and stops. Watch: it does not send anything on its own."
 
-1:50-2:15 - The boundary, live: "writer, fetch the full posting yourself" -
-it refuses; its tools reach only its own directory. "scout, what's in my
-resume?" - it doesn't have it.
-"Two agents that cannot merge. The room is the only thing between them."
+[1:30-1:55 - the two probes and the refusals]
+"One honest note: this separation works because the helpers follow
+their rules - it is not a secure protection for private data. You can
+see the rules hold. Told to skip the scout and grab a posting from the
+web itself, the writer refuses - and asks the scout for it in the chat
+instead. Asked about my profile, the scout says: that's private, not
+mine to touch."
 
-2:15-2:40 - The gate: "Approved - the Northwind backend application."
-Writer moves the package to approved/ and appends one line to the room's
-Tracker doc. Show the Tracker.
-"The approval is a permanent room record, not a chat message."
+[1:55-2:25 - approve + reject, cutaways of approved/ and the tracker]
+"Now the part only I can do. I say: approve the Northwind application.
+The draft moves to the approved pile - you can see it - and one line
+goes into my tracker. I reject the other posting with my reason, and
+that goes on the record too. Every decision is mine, and every one is
+written down."
 
-2:40-2:55 - Remove-Switch close: "Remove Switch and there's no room between
-agents that must not share data, no binding approval, no shared tracker.
-Switch is the workflow. The template and fixtures are the whole repo."
+[2:25-2:40 - the project view]
+"That's one internship, done properly: found, drafted, decided - with a
+record. The helpers split the work, and I never lost control of it."
