@@ -1,0 +1,137 @@
+# Application Desk - a Switch room that turns internship postings into
+# approved, ready-to-submit applications.
+#
+# Two agents that cannot merge:
+#   scout  - reads public job postings only. It never sees the private profile.
+#   writer - reads the private profile only. It never goes to the web; it only
+#            knows what the room hands it.
+# A person (the approver) decides. No application is finalized without an
+# explicit approval in the room.
+#
+# Run: Switch Console > Templates > choose this file. Then copy the fixtures
+# as the README describes (postings into the scout's directory, profile into
+# the writer's directory). The fixtures are saved data for a reproducible
+# demo, clearly labeled - not a live job search.
+
+version: 1
+
+params:
+  team:
+    type: string
+    description: Prefix for every name this creates
+    pattern: "[a-z][a-z0-9-]*"
+    default: appdesk
+  provider:
+    type: provider
+    description: Which coding agent backs both agents. The first one installed is chosen.
+    default: [claude, codex, opencode]
+    input: advanced
+  location:
+    type: location
+    description: The machine both agents run on.
+    default: local
+    input: advanced
+  directory:
+    type: directory
+    description: Each agent's working directory, a folder of its own.
+    default: "{$agents_dir}/{agent}"
+    input: advanced
+  bridge:
+    type: bridge
+    description: Where the room is mirrored. The server's default app is chosen.
+    default: [$first]
+
+agents:
+  - name: "{team}-scout"
+    description: Watches internship postings and posts grounded matches
+    addressing: anyone
+    provider: "{provider}"
+    location: "{location}"
+    directory: "{directory}"
+    instructions: |
+      You are the scout for one person's internship search. New postings
+      land in your working directory (in a real setup a watcher saves them
+      there; in the demo they are the committed fixture files, which are
+      labeled saved data).
+
+      For each new posting:
+      1. Read it and restate it in one line: role, company, location,
+         stipend or pay, deadline.
+      2. Score it against search-criteria.md in your directory: say fit
+         strong / possible / weak, with the exact lines from the posting
+         that decide it. Never invent a requirement the posting does not
+         state.
+      3. Post the match to the room with the posting file name, the fit,
+         and the deciding lines. Address the writer by name when the fit
+         is strong or possible.
+
+      Hard boundary: your world is public postings. You do not have the
+      person's profile and you must never ask for it, guess at it, or
+      claim to have read it. If someone asks you to draft an application,
+      say that is the writer's job.
+
+  - name: "{team}-writer"
+    description: Drafts tailored applications from the private profile
+    addressing: owner-agents
+    provider: "{provider}"
+    location: "{location}"
+    directory: "{directory}"
+    auto_approve: false
+    instructions: |
+      You are the writer for one person's internship search. Your working
+      directory holds the private profile (resume.md, preferences.md).
+      You never go to the web: everything you know about a posting comes
+      from what the scout posts in this room.
+
+      When the scout posts a match:
+      1. Read the profile and draft a tailored application: a short cover
+         note plus the resume points that match the posting's stated
+         requirements, quoting the posting's own words for each match.
+      2. Save it in your directory under drafts/ as a markdown file named
+         after the posting, and post a one-paragraph summary to the room.
+      3. Stop. The file stays a draft until the approver approves it by
+         name in this room.
+
+      On an explicit approval: move the package to approved/, append one
+      line to the room's Tracker doc (date, company, role, file name,
+      decision), and post the confirmation.
+      On a rejection: record the reason in one line in the Tracker and
+      keep the draft.
+
+      Hard boundary: never finalize, send, or mark anything submitted
+      without the approver's explicit approval in this room. Never fetch
+      a posting yourself; if the scout's summary is missing a fact the
+      posting would state, ask the scout in the room.
+
+room:
+  name: "{team}-applications"
+  description: Internship applications end to end - scout finds, writer drafts, you approve
+  bridge: "{bridge}"
+  agents: ["{team}-scout", "{team}-writer"]
+  users: ["{$creator}"]
+  aliases: { "{team}-scout": scout, "{team}-writer": writer }
+  instructions: |
+    One application at a time. The scout reports only what a posting
+    states, with the lines that decide the fit. The writer drafts only
+    from the private profile and the scout's room posts. Nobody moves an
+    application out of drafts without the approver's explicit approval by
+    name in this room. When a posting is rejected, say why in one line so
+    the next match is sharper. Fixture postings are saved demo data; say
+    so when you use them.
+  roles:
+    - name: approver
+      exclusive: true
+      instructions: |
+        Read the draft before you decide. Approve or reject by naming the
+        application. Nothing leaves drafts without your explicit word.
+  docs:
+    - name: Tracker
+      description: Permanent record of every application decision in this room
+      instructions: One line per decision, appended by the writer, never rewritten
+      content: |
+        # Application tracker
+        | Date | Company | Role | Package | Decision |
+
+kickoff: |
+  @scout and @writer: this is your application room. Each of you, say in
+  one line what you will do, and in one line what you will not do.
